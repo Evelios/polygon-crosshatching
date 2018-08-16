@@ -8,12 +8,12 @@ const plugins = [
 
 export default {
   plugins,
-  input: './adaptive-poisson-sampling.js',
+  input: './boundingbox-crosshatching.js',
   output: [
     // UMD Build
     {
-      name: 'poisson',
-      file: 'index.js',
+      name: 'boundingboxCrosshatching',
+      file: 'build.js',
       format: 'umd',
       interop: false,
     },    
