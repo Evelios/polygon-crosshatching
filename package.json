@@ -1,0 +1,26 @@
+{
+  "name": "boundingbox-crosshatching",
+  "version": "1.0.0",
+  "description": "Create crosshatching within a bounding box",
+  "main": "boundingbox-crosshatching.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Evelios/boundingbox-crosshatching.git"
+  },
+  "keywords": [
+    "bounding-box",
+    "crosshatching",
+    "penplot",
+    "2d",
+    "rectangle"
+  ],
+  "author": "Thomas Waters",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Evelios/boundingbox-crosshatching/issues"
+  },
+  "homepage": "https://github.com/Evelios/boundingbox-crosshatching#readme"
+}
