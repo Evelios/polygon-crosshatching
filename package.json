@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "new-array": "^1.0.0",
-    "parse-rect": "^1.2.0"
+    "parse-rect": "^1.2.0",
+    "vector": "git+https://github.com/Evelios/Vector.git"
   }
 }

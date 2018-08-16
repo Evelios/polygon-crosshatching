@@ -51,7 +51,7 @@ function createAndRender() {
 }
 
 function create() {
-    hatching = boundingboxCrosshatching(bbox, params.spacing, params.angle);
+    hatching = boundingboxCrosshatching(bbox, params.spacing, params.angle / 180 * Math.PI);
 }
 
 function render() {
