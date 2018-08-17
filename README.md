@@ -23,6 +23,13 @@ The output is a list of line with the points in list form
 
 ### Example in code
 ```js
+// Browser include
+<script src="./node_modules/boundingbox-crosshatching/build.js"></script>
+// this incldues the global function `boundingboxCrosshatching` into the namespace
+
+// Node's CJS Include
+const boundingboxCrosshatching = require(boundingbox-crosshatching);
+
 const bbox = { x: 10, y: 10, height: 400, width: 600 };
 const spacing = 25;
 const angle = Math.PI / 3; // 30deg
