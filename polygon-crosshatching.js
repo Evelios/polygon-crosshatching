@@ -1,27 +1,34 @@
-import parseRect from 'parse-rect';
 import newArray from 'new-array';
 import Vector from 'vector';
-import lineClip from 'lineclip';
+import lineSegmentIntersection from 'line-segment-intersection';
 
 /**
- * Fill a bounding box with crosshatching defined by a particular spacing and at
+ * Fill a convex polygon with crosshatching defined by a particular spacing and at
  * a particular angle.
  * 
  * @export
- * @param {rectangle} bbox The rectangle in which the crosshatching will be placed
+ * @param {Line[]} polygon The polygon to fill with crosshatching
  * @param {number} spacing The density of the crosshatching
  * @param {number} angle The angle that the crosshatching is created
- * @see {@link https://www.npmjs.com/package/parse-rect}
  */
-export default function boundingboxCrosshatching(bbox, spacing, angle=Math.PI) {
+export default function polygonCrosshatching(polygon, spacing, angle=Math.PI) {
   // Calculate the bbox endpoints
   const in_angle = angle % Math.PI;
-  const rect = parseRect(bbox);
-  const rectList = [rect.x, rect.y, rect.x + rect.width, rect.y + rect.height];
-  const tl = [rect.x,              rect.y              ];
-  const tr = [rect.x + rect.width, rect.y              ];
-  const bl = [rect.x,              rect.y + rect.height];
-  const br = [rect.x + rect.width, rect.y + rect.height];
+  const poly_segments = polygon.map((vertex, index, array) => {
+    const next_vertex = array[(index + 1) % array.length];
+    return [vertex, next_vertex];
+  });
+
+  const rect = {
+    min_x : Math.min(...polygon.map((vert) => vert[0])),
+    min_y : Math.min(...polygon.map((vert) => vert[1])),
+    max_x : Math.max(...polygon.map((vert) => vert[0])),
+    max_y : Math.max(...polygon.map((vert) => vert[1])),
+  };
+  const tl = [rect.min_x, rect.min_y];
+  const tr = [rect.max_x, rect.min_y];
+  const bl = [rect.min_x, rect.max_y];
+  const br = [rect.max_x, rect.max_y];
 
   // Calculate the rectangle properties
   const top_corner = in_angle > Math.PI/2 ? tl : tr;
@@ -30,7 +37,7 @@ export default function boundingboxCrosshatching(bbox, spacing, angle=Math.PI) {
   const diag_distance = Vector.distance(rect_diag[0], rect_diag[1]);
 
   // Calculate information to create the refrence line for the hatching
-  const line_angle = in_angle + Math.atan(rect.height, rect.width);
+  const line_angle = in_angle + Math.atan(rect.max_y - rect.min_y, rect.max_x - rect.min_x);
   const line_distance = diag_distance;
   const num_lines = Math.floor(Math.abs(line_distance / spacing));
 
@@ -47,11 +54,11 @@ export default function boundingboxCrosshatching(bbox, spacing, angle=Math.PI) {
       Vector.add(hatch_point, Vector.Polar(width, line_angle + Math.PI / 2)),
     ];
 
-    const clipped_hatch = lineClip(unclipped_hatch, rectList);
-
-    // biproduct of lineclip library. The library adds an extra list around answer
-    return clipped_hatch.length > 0 ? clipped_hatch[0] : clipped_hatch;
+    return poly_segments.reduce((acc, seg) => {
+      const intersection = lineSegmentIntersection(seg, unclipped_hatch);
+      return intersection.length > 1 ? acc.concat([intersection]) : acc;
+    }, []);
   });
 
-  return hatches.filter((hatch) => hatch.length > 0);
+  return hatches.filter((hatch) => hatch.length > 1);
 }

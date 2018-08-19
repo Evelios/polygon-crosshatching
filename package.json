@@ -12,11 +12,11 @@
     "url": "git+https://github.com/Evelios/polygon-crosshatching.git"
   },
   "keywords": [
-    "bounding-box",
+    "polygon",
     "crosshatching",
     "penplot",
     "2d",
-    "rectangle"
+    "stroke"
   ],
   "author": "Thomas Waters",
   "license": "MIT",
@@ -30,9 +30,8 @@
     "rollup-plugin-node-resolve": "^3.3.0"
   },
   "dependencies": {
-    "lineclip": "^1.1.5",
+    "line-segment-intersection": "git+https://github.com/Evelios/line-segment-intersection.git",
     "new-array": "^1.0.0",
-    "parse-rect": "^1.2.0",
     "vector": "git+https://github.com/Evelios/Vector.git"
   }
 }

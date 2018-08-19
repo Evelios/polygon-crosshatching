@@ -12,7 +12,8 @@ var quaternaryColor = tinycolor("#479030");
 var padding = 100;
 var width;
 var height;
-var bbox;
+var polygon;
+var polygon_segments;
 var hatching;
 var rng;
 
@@ -25,12 +26,18 @@ var params = {
 function setup() {
     width = document.body.clientWidth || window.innerWidth;
     height = document.body.clientHeight || window.innerHeight;
-    bbox = {
-        x : padding,
-        y : padding,
-        width : width -  (2 * padding),
-        height : height - (2 * padding)
-    };
+    polygon = [
+        [padding, 1/3 * height + padding],
+        [1/2 * (width - padding), padding],
+        [width - padding, 1/3 * height + padding],
+        [7/8 * (width - padding), 7/8 * (height - padding)],
+        [1/3 * width + padding, height - padding]
+    ];
+
+    polygon_segments = polygon.map((vertex, index, array) => {
+        const next_vertex = array[(index + 1) % array.length];
+        return [vertex, next_vertex];
+    });
 
     createCanvas(width, height);
 
@@ -51,7 +58,7 @@ function createAndRender() {
 }
 
 function create() {
-    hatching = boundingboxCrosshatching(bbox, params.spacing, params.angle / 180 * Math.PI);
+    hatching = polygonCrosshatching(polygon, params.spacing, params.angle / 180 * Math.PI);
 }
 
 function render() {
@@ -67,5 +74,8 @@ function render() {
 
     strokeWeight(4);
     stroke(tertiaryColor.toHexString());
-    rect(bbox.x, bbox.y, bbox.width, bbox.height);
+    polygon_segments.forEach((segment) => {
+        line(segment[0][0], segment[0][1], segment[1][0], segment[1][1]);
+    });
+    
 }

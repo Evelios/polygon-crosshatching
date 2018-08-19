@@ -6,11 +6,20 @@ in your node app.
 
 # Usage
 
-`polygonCrosshatching(bbox, spacing, angle)`
-+ `bbox` The rectangle in which the crosshatching will be placed
-  + Rectangle definition can have many forms. They are listed in the [parse-rect](https://www.npmjs.com/package/parse-rect) npm library
+`polygonCrosshatching(polygon, spacing, angle)`
++ `polygon` The convex polygon in which the crosshatching will be placed
 + `spacing` spacing The density of the crosshatching
 + `angle` The angle that the crosshatching is created in radians
+
+The `polygon` input is a polygon in list form
+```js
+[
+  [x1, y1], // Vertex 1
+  [x2, y2], // Vertex 2
+  [x3, y3], // Vertex 3
+  ...
+]
+```
 
 The output is a list of line with the points in list form
 ```js
@@ -30,11 +39,17 @@ The output is a list of line with the points in list form
 // Node's CJS Include
 const poylgonCrosshatching = require(polygon-crosshatching);
 
-const bbox = { x: 10, y: 10, height: 400, width: 600 };
-const spacing = 25;
+const polygon = [
+  [   0,   0 ],
+  [ 100,   0 ],
+  [ 120, 100 ],
+  [  50, 200 ],
+  [  20, 100 ]
+];
+const spacing = 5;
 const angle = Math.PI / 3; // 30deg
 
-const hatches = polygonCrosshatching(bbox, spacing, angle);
+const hatches = polygonCrosshatching(polygon, spacing, angle);
 // output is a list of lines
 ```
 
