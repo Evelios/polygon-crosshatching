@@ -8,11 +8,11 @@ const plugins = [
 
 export default {
   plugins,
-  input: './boundingbox-crosshatching.js',
+  input: './polygon-crosshatching.js',
   output: [
     // UMD Build
     {
-      name: 'boundingboxCrosshatching',
+      name: 'polygonCrosshatching',
       file: 'build.js',
       format: 'umd',
       interop: false,
