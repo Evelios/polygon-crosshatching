@@ -68,7 +68,6 @@ function render() {
     strokeWeight(2);
     stroke(primaryColor.toHexString());
     for (var hatch of hatching) {
-        console.log(hatch);
         line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
     }
 

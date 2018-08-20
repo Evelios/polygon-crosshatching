@@ -641,6 +641,9 @@
       max_x : Math.max(...polygon.map((vert) => vert[0])),
       max_y : Math.max(...polygon.map((vert) => vert[1])),
     };
+    const width = rect.max_x - rect.min_x;
+    const height = rect.max_y - rect.min_y;
+    const longest_side = Math.max(width, height);
     const tl = [rect.min_x, rect.min_y];
     const tr = [rect.max_x, rect.min_y];
     const bl = [rect.min_x, rect.max_y];
@@ -666,10 +669,11 @@
 
       // Created the single hatch mark perpendicular to the reference line
       const unclipped_hatch = [
-        Vector.add(hatch_point, Vector.Polar(width, line_angle - Math.PI / 2)),
-        Vector.add(hatch_point, Vector.Polar(width, line_angle + Math.PI / 2)),
+        Vector.add(hatch_point, Vector.Polar(longest_side, line_angle - Math.PI / 2)),
+        Vector.add(hatch_point, Vector.Polar(longest_side, line_angle + Math.PI / 2)),
       ];
 
+      // Clip the hatch lines by getting the intersection points with the bounding polygon
       return poly_segments.reduce((acc, seg) => {
         const intersection = lineSegmentIntersection(seg, unclipped_hatch);
         return intersection.length > 1 ? acc.concat([intersection]) : acc;
