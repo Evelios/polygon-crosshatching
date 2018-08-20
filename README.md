@@ -37,7 +37,7 @@ The output is a list of line with the points in list form
 // this incldues the global function `polygonCrosshatching` into the namespace
 
 // Node's CJS Include
-const poylgonCrosshatching = require(polygon-crosshatching);
+const poylgonCrosshatching = require('polygon-crosshatching');
 
 const polygon = [
   [   0,   0 ],
