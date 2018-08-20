@@ -669,8 +669,8 @@
 
       // Created the single hatch mark perpendicular to the reference line
       const unclipped_hatch = [
-        Vector.add(hatch_point, Vector.Polar(longest_side, line_angle - Math.PI / 2)),
-        Vector.add(hatch_point, Vector.Polar(longest_side, line_angle + Math.PI / 2)),
+        Vector.add(hatch_point, Vector.Polar(2*longest_side, line_angle - Math.PI / 2)),
+        Vector.add(hatch_point, Vector.Polar(2*longest_side, line_angle + Math.PI / 2)),
       ];
 
       // Clip the hatch lines by getting the intersection points with the bounding polygon
