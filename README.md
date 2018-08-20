@@ -55,3 +55,12 @@ const hatches = polygonCrosshatching(polygon, spacing, angle);
 
 ### Example output
 ![polygon-crosshatching](./example.png)
+
+
+# Change Log
+
+### 1.0.1
+Fixed a bug that had the missing crosshatching dimensioning parameter.
+There was also a bug that didn't account for skinny vertical polygons,
+this has been corrected so that any shape convex polygon should have
+hatching.
