@@ -20,7 +20,7 @@ var rng;
 var params = {
     // Parameters
     spacing: 10,
-    angle: 0,
+    angle: 30,
 };
 
 function setup() {
@@ -58,7 +58,7 @@ function createAndRender() {
 }
 
 function create() {
-    hatching = polygonCrosshatching(polygon, params.spacing, params.angle / 180 * Math.PI);
+    hatching = polygonCrosshatching(polygon, params.angle / 180 * Math.PI, params.spacing);
 }
 
 function render() {
@@ -67,10 +67,21 @@ function render() {
 
     strokeWeight(2);
     stroke(primaryColor.toHexString());
-    for (var hatch of hatching) {
-        console.log(hatch);
-        line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
+    for (var index = 0; index < hatching.length; index++) {
+        const next_index = (index + 1) % hatching.length;
+        const current_vertex = hatching[index];
+        const next_vertex = hatching[next_index];
+
+
+        line(current_vertex[0], current_vertex[1],
+             next_vertex[0], next_vertex[1]);
     }
+
+    // strokeWeight(2);
+    // stroke(primaryColor.toHexString());
+    // hatching.forEach(hatch => {
+    //     line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
+    // });
 
     strokeWeight(4);
     stroke(tertiaryColor.toHexString());
