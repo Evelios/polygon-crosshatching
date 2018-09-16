@@ -19,7 +19,8 @@ var rng;
 
 var params = {
     // Parameters
-    spacing: 10,
+    min_spacing: 5,
+    max_spacing: 30,
     angle: 30,
 };
 
@@ -48,8 +49,9 @@ function setup() {
 function setUpGui() {
     var gui = new dat.GUI();
 
-    gui.add(params, "spacing", 1, 100, 1).name("Line Spacing").onChange(createAndRender);
     gui.add(params, "angle", 0, 360, 1).name("Hatching Angle").onChange(createAndRender);
+    gui.add(params, "min_spacing", 1, 50, 1).name("Spacing Start").onChange(createAndRender);
+    gui.add(params, "max_spacing", 1, 50, 1).name("Spacing End").onChange(createAndRender);
 }
 
 function createAndRender() {
@@ -58,32 +60,13 @@ function createAndRender() {
 }
 
 function create() {
-    hatching = polygonCrosshatching(polygon, params.angle / 180 * Math.PI, params.spacing);
+    hatching = polygonCrosshatching(polygon, params.angle / 180 * Math.PI,
+        params.min_spacing, params.max_spacing);
 }
 
 function render() {
     noFill();
     background(bgColor.toHexString());
-
-    // const bounded_line = hatching[0];
-    // strokeWeight(2);
-    // stroke(primaryColor.toHexString());
-    // for (var index = 0; index < bounded_line.length; index++) {
-    //     const next_index = (index + 1) % bounded_line.length;
-    //     const current_vertex = bounded_line[index];
-    //     const next_vertex = bounded_line[next_index];
-
-
-    //     line(current_vertex[0], current_vertex[1],
-    //          next_vertex[0], next_vertex[1]);
-    // }
-
-    // const hatches = hatching[1];
-    // strokeWeight(2);
-    // stroke(primaryColor.toHexString());
-    // hatches.forEach(hatch => {
-    //     line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
-    // });
 
     strokeWeight(2);
     stroke(primaryColor.toHexString());

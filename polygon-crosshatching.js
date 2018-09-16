@@ -1,4 +1,3 @@
-import newArray from 'new-array';
 import Vector from 'vector';
 import lineSegmentIntersection from 'line-segment-intersection';
 
@@ -43,33 +42,63 @@ export default function polygonCrosshatching(polygon, angle, min_density,
     return intersection.length > 1 ? acc.concat([intersection]) : acc;
   }, []);
 
-  const hatching_start_pos = bounded_reference_line[0];
+  const hatching_start_pos = bounded_reference_line[1];
   const reference_line_length = 
     Vector.distance(bounded_reference_line[0], bounded_reference_line[1]);
   const number_hatches = Math.ceil(reference_line_length / min_density);
 
-  const hatches = newArray(number_hatches).map((_, i) => {
-    // Iterate down the reference line
-    const hatch_point = Vector.offset(hatching_start_pos, -i * min_density, -angle);
 
-    // Created the single hatch mark perpendicular to the reference line
+  let distance_travled = 0;
+  let hatches = [];
+  // Add in the initial condition
+
+  while (distance_travled < reference_line_length) {
+    const current_spacing = lerp(min_density, max_density,
+       distance_travled / reference_line_length);
+
+    // const current_spacing = min_density;
+    distance_travled += current_spacing;
+    const hatch_point = Vector.offset(hatching_start_pos, distance_travled, -angle);
+
     const unclipped_hatch = [
-      Vector.offset(hatch_point, bbox_diag_length, -angle + Math.PI/2),
-      Vector.offset(hatch_point, bbox_diag_length, -angle - Math.PI/2),
+      Vector.offset(hatch_point, bbox_diag_length, -angle + Math.PI / 2),
+      Vector.offset(hatch_point, bbox_diag_length, -angle - Math.PI / 2),
     ];
 
-    // Clip the hatch lines by getting the intersection points with the bounding polygon
     const clipped_hatch = poly_segments.reduce((acc, seg) => {
       const intersection = lineSegmentIntersection(seg, unclipped_hatch);
       return intersection.length > 1 ? acc.concat([intersection]) : acc;
     }, []);
 
-    return clipped_hatch;
-  });
+    if (clipped_hatch.length > 1) {
+      hatches.push(clipped_hatch)
+    }
+  }
 
-  const good_hatches = hatches.filter((hatch) => hatch.length > 1);
+  return hatches;
 
-  return good_hatches;
+  // const hatches = newArray(number_hatches).map((_, i) => {
+  //   // Iterate down the reference line
+  //   const hatch_point = Vector.offset(hatching_start_pos, -i * min_density, -angle);
+
+  //   // Created the single hatch mark perpendicular to the reference line
+  //   const unclipped_hatch = [
+  //     Vector.offset(hatch_point, bbox_diag_length, -angle + Math.PI/2),
+  //     Vector.offset(hatch_point, bbox_diag_length, -angle - Math.PI/2),
+  //   ];
+
+  //   // Clip the hatch lines by getting the intersection points with the bounding polygon
+  //   const clipped_hatch = poly_segments.reduce((acc, seg) => {
+  //     const intersection = lineSegmentIntersection(seg, unclipped_hatch);
+  //     return intersection.length > 1 ? acc.concat([intersection]) : acc;
+  //   }, []);
+
+  //   return clipped_hatch;
+  // });
+
+  // const good_hatches = hatches.filter((hatch) => hatch.length > 1);
+
+  // return good_hatches;
 
 
   // ---- Helper Functions -----------------------------------------------------

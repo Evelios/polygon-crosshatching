@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "line-segment-intersection": "git+https://github.com/Evelios/line-segment-intersection.git",
-    "new-array": "^1.0.0",
     "vector": "git+https://github.com/Evelios/Vector.git"
   }
 }
