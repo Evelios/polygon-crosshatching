@@ -2,6 +2,10 @@ import newArray from 'new-array';
 import Vector from 'vector';
 import lineSegmentIntersection from 'line-segment-intersection';
 
+/*
+  There is a bug that happens at 0 and 360 degrees
+ */
+
 /**
  * Fill a convex polygon with crosshatching defined by a particular spacing and at
  * a particular angle.
@@ -14,6 +18,11 @@ import lineSegmentIntersection from 'line-segment-intersection';
  */
 export default function polygonCrosshatching(polygon, angle, min_density,
                                              max_density=min_density) {
+  console.assert(min_density > 0,
+    "polygonCrosshatching : The minimum density must be greater than 0");
+  console.assert(max_density > 0,
+    "polygonCrosshatching : The maximum density must be greater than 0");
+
   const center = Vector.avg(polygon);
   const poly_segments = polygonToSegments(polygon);
   
@@ -36,7 +45,7 @@ export default function polygonCrosshatching(polygon, angle, min_density,
 
   const hatching_start_pos = bounded_reference_line[0];
   const reference_line_length = 
-    Vector.magnitude(bounded_reference_line[0], bounded_reference_line[1]);
+    Vector.distance(bounded_reference_line[0], bounded_reference_line[1]);
   const number_hatches = Math.ceil(reference_line_length / min_density);
 
   const hatches = newArray(number_hatches).map((_, i) => {
@@ -49,18 +58,18 @@ export default function polygonCrosshatching(polygon, angle, min_density,
       Vector.offset(hatch_point, bbox_diag_length, -angle - Math.PI/2),
     ];
 
-    return unclipped_hatch;
+    // Clip the hatch lines by getting the intersection points with the bounding polygon
+    const clipped_hatch = poly_segments.reduce((acc, seg) => {
+      const intersection = lineSegmentIntersection(seg, unclipped_hatch);
+      return intersection.length > 1 ? acc.concat([intersection]) : acc;
+    }, []);
 
-    // // Clip the hatch lines by getting the intersection points with the bounding polygon
-    // return poly_segments.reduce((acc, seg) => {
-    //   const intersection = lineSegmentIntersection(seg, unclipped_hatch);
-    //   return intersection.length > 1 ? acc.concat([intersection]) : acc;
-    // }, []);
+    return clipped_hatch;
   });
 
-  return [bounded_reference_line, hatches];
+  const good_hatches = hatches.filter((hatch) => hatch.length > 1);
 
-  // return hatches.filter((hatch) => hatch.length > 1);
+  return good_hatches;
 
 
   // ---- Helper Functions -----------------------------------------------------

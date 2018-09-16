@@ -65,32 +65,31 @@ function render() {
     noFill();
     background(bgColor.toHexString());
 
-    const bounded_line = hatching[0];
-    strokeWeight(2);
-    stroke(primaryColor.toHexString());
-    for (var index = 0; index < bounded_line.length; index++) {
-        const next_index = (index + 1) % bounded_line.length;
-        const current_vertex = bounded_line[index];
-        const next_vertex = bounded_line[next_index];
-
-
-        line(current_vertex[0], current_vertex[1],
-             next_vertex[0], next_vertex[1]);
-    }
-
-    const hatches = hatching[1];
-    console.log(hatches);
-    strokeWeight(2);
-    stroke(primaryColor.toHexString());
-    hatches.forEach(hatch => {
-        line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
-    });
-
+    // const bounded_line = hatching[0];
     // strokeWeight(2);
     // stroke(primaryColor.toHexString());
-    // hatching.forEach(hatch => {
+    // for (var index = 0; index < bounded_line.length; index++) {
+    //     const next_index = (index + 1) % bounded_line.length;
+    //     const current_vertex = bounded_line[index];
+    //     const next_vertex = bounded_line[next_index];
+
+
+    //     line(current_vertex[0], current_vertex[1],
+    //          next_vertex[0], next_vertex[1]);
+    // }
+
+    // const hatches = hatching[1];
+    // strokeWeight(2);
+    // stroke(primaryColor.toHexString());
+    // hatches.forEach(hatch => {
     //     line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
     // });
+
+    strokeWeight(2);
+    stroke(primaryColor.toHexString());
+    hatching.forEach(hatch => {
+        line(hatch[0][0], hatch[0][1], hatch[1][0], hatch[1][1]);
+    });
 
     strokeWeight(4);
     stroke(tertiaryColor.toHexString());
