@@ -612,7 +612,10 @@
     };
 
     /*
-      There is a bug that happens at 0 and 360 degrees
+      ---- Things to improve ----
+        - There is a bug that happens at 0 and 360 degrees
+        - Figure out why the negative angles are in there. There might be a more
+          elegant and better to understand way of creating the hatches
      */
 
     /**
@@ -624,17 +627,24 @@
      * @param {number} angle The angle that the crosshatching is created
      * @param {number} min_density The density of the crosshatching
      * @param {number} max_density The density of the crosshatching
+     * @param {function(x)} redistribtuion The function to change how the spacing
+     *  is arranged from within the polygon
      */
     function polygonCrosshatching(polygon, angle, min_density,
-                                                 max_density=min_density) {
+                                                 max_density=min_density, redistribution) {
+      // Check the user input
       console.assert(min_density > 0,
         "polygonCrosshatching : The minimum density must be greater than 0");
       console.assert(max_density > 0,
         "polygonCrosshatching : The maximum density must be greater than 0");
 
+      console.log(redistribution);
+
+      // Initilization
       const center = Vector.avg(polygon);
       const poly_segments = polygonToSegments(polygon);
       
+      // Create the rotated bounding box of the polygon
       const bbox = getRotatedBbox(polygon, center, angle);
       const bbox_segments = polygonToSegments(bbox);
 
@@ -652,20 +662,19 @@
         return intersection.length > 1 ? acc.concat([intersection]) : acc;
       }, []);
 
+      // Set up the crosshatching algorithm
       const hatching_start_pos = bounded_reference_line[1];
       const reference_line_length = 
         Vector.distance(bounded_reference_line[0], bounded_reference_line[1]);
 
-
       let distance_travled = 0;
       let hatches = [];
-      // Add in the initial condition
 
+      // Create all the hatches from the beginning to end of the reference line
       while (distance_travled < reference_line_length) {
-        const current_spacing = lerp(min_density, max_density,
-           distance_travled / reference_line_length);
+        const lerp_ammount = redistribution(distance_travled / reference_line_length);
+        const current_spacing = lerp(min_density, max_density, lerp_ammount);
 
-        // const current_spacing = min_density;
         distance_travled += current_spacing;
         const hatch_point = Vector.offset(hatching_start_pos, distance_travled, -angle);
 
@@ -686,32 +695,15 @@
 
       return hatches;
 
-      // const hatches = newArray(number_hatches).map((_, i) => {
-      //   // Iterate down the reference line
-      //   const hatch_point = Vector.offset(hatching_start_pos, -i * min_density, -angle);
-
-      //   // Created the single hatch mark perpendicular to the reference line
-      //   const unclipped_hatch = [
-      //     Vector.offset(hatch_point, bbox_diag_length, -angle + Math.PI/2),
-      //     Vector.offset(hatch_point, bbox_diag_length, -angle - Math.PI/2),
-      //   ];
-
-      //   // Clip the hatch lines by getting the intersection points with the bounding polygon
-      //   const clipped_hatch = poly_segments.reduce((acc, seg) => {
-      //     const intersection = lineSegmentIntersection(seg, unclipped_hatch);
-      //     return intersection.length > 1 ? acc.concat([intersection]) : acc;
-      //   }, []);
-
-      //   return clipped_hatch;
-      // });
-
-      // const good_hatches = hatches.filter((hatch) => hatch.length > 1);
-
-      // return good_hatches;
-
-
       // ---- Helper Functions -----------------------------------------------------
 
+      /**
+       * Get the rotated bounding box of a polygon.
+       * 
+       * @param {Point[]} polygon The polygon to find the bounding box of
+       * @param {Point} center The center of the polygon (sent to save time)
+       * @param {number} angle The angle that the bounding box will be at
+       */
       function getRotatedBbox(polygon, center, angle) {
         const rotated_polygon = polygon.map(vertex =>
           Vector.rotate(vertex, center, angle)
@@ -742,7 +734,7 @@
        * Take a polygon that is in path form [p1, p2, p3, ... , pn] and turn it into the
        * segment form of a polygon. [ [p1, p2], [p2, p3], ... , [pn, p1] ]
        * 
-       * @param polygon The input polygon in path form
+       * @param {Point[]} polygon The input polygon in path form
        * @returns The input polygon in segment form
        */
       function polygonToSegments(polygon) {

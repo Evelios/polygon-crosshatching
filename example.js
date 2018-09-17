@@ -1,27 +1,51 @@
 "use strict";
 
 // Colors
-var bgColor = tinycolor("#303030");
-var bgAccent = tinycolor("#393939");
-var primaryColor = tinycolor("#AA7539");
-var secondaryColor = tinycolor("#A23645");
-var tertiaryColor = tinycolor("#27566B");
-var quaternaryColor = tinycolor("#479030");
+const bgColor = tinycolor("#303030");
+const bgAccent = tinycolor("#393939");
+const primaryColor = tinycolor("#AA7539");
+const secondaryColor = tinycolor("#A23645");
+const tertiaryColor = tinycolor("#27566B");
+const quaternaryColor = tinycolor("#479030");
 
 // Globals
-var padding = 100;
-var width;
-var height;
-var polygon;
-var polygon_segments;
-var hatching;
-var rng;
+let padding = 100;
+let width;
+let height;
+let polygon;
+let polygon_segments;
+let hatching;
+let rng;
 
-var params = {
+const inverse_function = fn => {
+    return x => 1 - fn(x)
+};
+
+let params = {
     // Parameters
     min_spacing: 5,
     max_spacing: 30,
     angle: 30,
+    redistribution: 'Linear',
+    distribution_strength: 1,
+    inverse: false,
+
+    // Options
+    redistribution_options: [
+        'Linear',
+        'Exponential',
+        // 'Logarithmic',
+    ],
+
+    // Functions
+    redistribution_functions: {
+        Linear      : strength => {
+            return x => x;
+        },
+        Exponential : strength => {
+            return x => Math.pow(x, strength);
+        },
+    },
 };
 
 function setup() {
@@ -50,8 +74,11 @@ function setUpGui() {
     var gui = new dat.GUI();
 
     gui.add(params, "angle", 0, 360, 1).name("Hatching Angle").onChange(createAndRender);
-    gui.add(params, "min_spacing", 1, 50, 1).name("Spacing Start").onChange(createAndRender);
-    gui.add(params, "max_spacing", 1, 50, 1).name("Spacing End").onChange(createAndRender);
+    gui.add(params, "min_spacing", 1, 50, 1).name("Start Density").onChange(createAndRender);
+    gui.add(params, "max_spacing", 1, 50, 1).name("End Density").onChange(createAndRender);
+    gui.add(params, "redistribution", params.redistribution_options).name("Redistribution").onChange(createAndRender);
+    gui.add(params, "distribution_strength", 1, 10, 1).name("Strength").onChange(createAndRender);
+    gui.add(params, "inverse").name("Inverse Distribution").onChange(createAndRender);
 }
 
 function createAndRender() {
@@ -60,8 +87,15 @@ function createAndRender() {
 }
 
 function create() {
+    let redistribution_function = 
+        params.redistribution_functions[params.redistribution](params.distribution_strength);
+
+    redistribution_function = params.inverse
+        ? inverse_function(redistribution_function)
+        : redistribution_function;
+
     hatching = polygonCrosshatching(polygon, params.angle / 180 * Math.PI,
-        params.min_spacing, params.max_spacing);
+        params.min_spacing, params.max_spacing, redistribution_function);
 }
 
 function render() {
