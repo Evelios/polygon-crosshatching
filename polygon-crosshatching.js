@@ -21,12 +21,15 @@ import lineSegmentIntersection from 'line-segment-intersection';
  *  is arranged from within the polygon
  */
 export default function polygonCrosshatching(polygon, angle, min_density,
-                                             max_density=min_density, redistribution) {
+                                             max_density=min_density, redistribution=(x=>x)) {
   // Check the user input
   console.assert(min_density > 0,
     "polygonCrosshatching : The minimum density must be greater than 0");
   console.assert(max_density > 0,
     "polygonCrosshatching : The maximum density must be greater than 0");
+  console.assert(redistribution(0) >= 0 && redistribution(0.5) >= 0 && redistribution(1) >= 0,
+    "polygonCrosshatching : The redistribution function must return values from 0-1. Yours" +
+    "returns values less than 0");
 
   // Initilization
   const center = Vector.avg(polygon);

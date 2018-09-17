@@ -34,16 +34,24 @@ let params = {
     redistribution_options: [
         'Linear',
         'Exponential',
+        'Sinusoidal',
+        'Random',
         // 'Logarithmic',
     ],
 
     // Functions
     redistribution_functions: {
-        Linear      : strength => {
+        Linear : _ => {
             return x => x;
         },
         Exponential : strength => {
             return x => Math.pow(x, strength);
+        },
+        Sinusoidal : strength => {
+            return x => remap(Math.sin(strength * x * 2*Math.PI), -1, 1, 0, 1);
+        },
+        Random : _ => {
+            return _ => Math.random();
         },
     },
 };
@@ -112,6 +120,9 @@ function render() {
     stroke(tertiaryColor.toHexString());
     polygon_segments.forEach((segment) => {
         line(segment[0][0], segment[0][1], segment[1][0], segment[1][1]);
-    });
-    
+    }); 
 }
+
+function remap(num, in_min, in_max, out_min, out_max) {
+    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
