@@ -6,18 +6,20 @@ in your node app.
 
 # Usage
 
-`polygonCrosshatching(polygon, spacing, angle)`
-+ `polygon` The convex polygon in which the crosshatching will be placed
-+ `spacing` spacing The density of the crosshatching
-+ `angle` The angle that the crosshatching is created in radians
+`polygonCrosshatching(polygon, angle, start_density, [end_density])`
++ `polygon {Point List}` The convex polygon in which the crosshatching will be placed
++ `angle {Number}` The angle that the crosshatching is created in radians
++ `start_density {Number > 0}` The starting spacing density of the crosshatching
++ `end_density {Number > 0}` The ending spacing density of the crosshatching
 
-The `polygon` input is a polygon in list form
+The `polygon` input is a polygon in a list of all the verticies
 ```js
 [
   [x1, y1], // Vertex 1
   [x2, y2], // Vertex 2
   [x3, y3], // Vertex 3
   ...
+  [xn, yn] // Last Vertex
 ]
 ```
 
@@ -49,9 +51,23 @@ const polygon = [
 const spacing = 5;
 const angle = Math.PI / 3; // 30deg
 
-const hatches = polygonCrosshatching(polygon, spacing, angle);
+const hatches = polygonCrosshatching(polygon, angle, spacing);
 // output is a list of lines
+
+const ending_spacing = 50;
+
+// To create a gradient from the starting angle to the ending angle within the polygon
+const gradient_hatching = polygonCrosshatching(polygon, angle, spacing, ending_spacing);
 ```
 
-### Example output
+## Example Uniform Spacing
 ![polygon-crosshatching](./example.png)
+
+## Example Gradient
+![polygon-crosshatching-gradient](./example_gradient.png)
+
+
+# Change Log
+
+## Version 1.1.0
+Added in the gradient crosshatching and changed the arrangement of the arguments in the function from `(polygon, spacing, angle)` to `(polygon, angle, spacing_start, spacing_end)` for better consistency and extensability.
