@@ -80,6 +80,9 @@ const redistributed_hatching = polygonCrosshatching(polygon, angle, spacing, end
 
 # Change Log
 
+## Version 1.3.0
+Fixed a bug in the UMV build with the lack of the `lerp` function.
+
 ## Version 1.2.0
 Added support for changing the gradient distribution. This changes how the lines are spaced within the the polygon.
 

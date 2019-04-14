@@ -16,6 +16,6 @@ export default {
       file: 'build.js',
       format: 'umd',
       interop: false,
-    },    
+    },
   ],
 };

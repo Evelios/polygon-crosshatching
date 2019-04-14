@@ -1,5 +1,6 @@
 import Vector from 'vector';
 import lineSegmentIntersection from 'line-segment-intersection';
+import lerp from 'lerp';
 
 /*
   ---- Things to improve ----
@@ -11,7 +12,7 @@ import lineSegmentIntersection from 'line-segment-intersection';
 /**
  * Fill a convex polygon with crosshatching defined by a particular spacing and at
  * a particular angle.
- * 
+ *
  * @export
  * @param {Line[]} polygon The polygon to fill with crosshatching
  * @param {number} angle The angle that the crosshatching is created
@@ -34,7 +35,7 @@ export default function polygonCrosshatching(polygon, angle, min_density,
   // Initilization
   const center = Vector.avg(polygon);
   const poly_segments = polygonToSegments(polygon);
-  
+
   // Create the rotated bounding box of the polygon
   const bbox = getRotatedBbox(polygon, center, angle);
   const bbox_segments = polygonToSegments(bbox);
@@ -55,7 +56,7 @@ export default function polygonCrosshatching(polygon, angle, min_density,
 
   // Set up the crosshatching algorithm
   const hatching_start_pos = bounded_reference_line[1];
-  const reference_line_length = 
+  const reference_line_length =
     Vector.distance(bounded_reference_line[0], bounded_reference_line[1]);
 
   let distance_travled = 0;
@@ -90,7 +91,7 @@ export default function polygonCrosshatching(polygon, angle, min_density,
 
   /**
    * Get the rotated bounding box of a polygon.
-   * 
+   *
    * @param {Point[]} polygon The polygon to find the bounding box of
    * @param {Point} center The center of the polygon (sent to save time)
    * @param {number} angle The angle that the bounding box will be at
@@ -124,7 +125,7 @@ export default function polygonCrosshatching(polygon, angle, min_density,
   /**
    * Take a polygon that is in path form [p1, p2, p3, ... , pn] and turn it into the
    * segment form of a polygon. [ [p1, p2], [p2, p3], ... , [pn, p1] ]
-   * 
+   *
    * @param {Point[]} polygon The input polygon in path form
    * @returns The input polygon in segment form
    */

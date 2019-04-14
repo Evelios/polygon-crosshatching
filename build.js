@@ -1,8 +1,8 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global.polygonCrosshatching = factory());
-}(this, (function () { 'use strict';
+    (global = global || self, global.polygonCrosshatching = factory());
+}(this, function () { 'use strict';
 
     var Vector = (function() {
         /**
@@ -611,6 +611,11 @@
       }
     };
 
+    function lerp(v0, v1, t) {
+        return v0*(1-t)+v1*t
+    }
+    var lerp_1 = lerp;
+
     /*
       ---- Things to improve ----
         - There is a bug that happens at 0 and 360 degrees
@@ -621,7 +626,7 @@
     /**
      * Fill a convex polygon with crosshatching defined by a particular spacing and at
      * a particular angle.
-     * 
+     *
      * @export
      * @param {Line[]} polygon The polygon to fill with crosshatching
      * @param {number} angle The angle that the crosshatching is created
@@ -644,7 +649,7 @@
       // Initilization
       const center = Vector.avg(polygon);
       const poly_segments = polygonToSegments(polygon);
-      
+
       // Create the rotated bounding box of the polygon
       const bbox = getRotatedBbox(polygon, center, angle);
       const bbox_segments = polygonToSegments(bbox);
@@ -665,7 +670,7 @@
 
       // Set up the crosshatching algorithm
       const hatching_start_pos = bounded_reference_line[1];
-      const reference_line_length = 
+      const reference_line_length =
         Vector.distance(bounded_reference_line[0], bounded_reference_line[1]);
 
       let distance_travled = 0;
@@ -674,7 +679,7 @@
       // Create all the hatches from the beginning to end of the reference line
       while (distance_travled < reference_line_length) {
         const lerp_ammount = redistribution(distance_travled / reference_line_length);
-        const current_spacing = lerp(min_density, max_density, lerp_ammount);
+        const current_spacing = lerp_1(min_density, max_density, lerp_ammount);
 
         distance_travled += current_spacing;
         const hatch_point = Vector.offset(hatching_start_pos, distance_travled, -angle);
@@ -700,7 +705,7 @@
 
       /**
        * Get the rotated bounding box of a polygon.
-       * 
+       *
        * @param {Point[]} polygon The polygon to find the bounding box of
        * @param {Point} center The center of the polygon (sent to save time)
        * @param {number} angle The angle that the bounding box will be at
@@ -734,7 +739,7 @@
       /**
        * Take a polygon that is in path form [p1, p2, p3, ... , pn] and turn it into the
        * segment form of a polygon. [ [p1, p2], [p2, p3], ... , [pn, p1] ]
-       * 
+       *
        * @param {Point[]} polygon The input polygon in path form
        * @returns The input polygon in segment form
        */
@@ -748,4 +753,4 @@
 
     return polygonCrosshatching;
 
-})));
+}));
